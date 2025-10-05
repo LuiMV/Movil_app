@@ -1,6 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+# Perfil de usuario para gamificación
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    total_points = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"Perfil de {self.user.username}"
+
 # Dispositivos vinculados
 class Device(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="devices")
@@ -35,6 +43,7 @@ class Challenge(models.Model):
         ("failed", "Fallido"),
     ], default="pending")
     awarded_points = models.IntegerField(default=0)
+    points_awarded = models.BooleanField(default=False, help_text="Indica si los puntos ya fueron sumados.")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -60,4 +69,3 @@ class AuditLog(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.action} - {self.timestamp}"
-
